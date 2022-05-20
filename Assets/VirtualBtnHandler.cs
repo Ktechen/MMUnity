@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,11 @@ public class VirtualBtnHandler : MonoBehaviour
     private float Speed { get; set; } = 20.0f;
     private const int DefaultSpeed = 5;
 
+    private bool isRotateLeft = false;
+    private bool isRotateRight = false;
+    private bool isForward = false;
+    private bool isBackward = false;
+
     void Start()
     {
         var vbs = GetComponentsInChildren<VirtualButtonBehaviour>();
@@ -23,7 +29,21 @@ public class VirtualBtnHandler : MonoBehaviour
     }
     private void OnButtonReleased(VirtualButtonBehaviour obj)
     {
-        Debug.Log(obj.name);
+        switch (obj.VirtualButtonName)
+        {
+            case "RotateLeft":
+                isRotateLeft = false;
+                break;
+            case "RotateRight":
+                isRotateRight = false;
+                break;
+            case "Forward":
+                isForward = false;
+                break;
+            case "Backward":
+                isBackward = false;
+                break;
+        }
     }
 
     private void OnButtonPressed(VirtualButtonBehaviour vb)
@@ -31,19 +51,43 @@ public class VirtualBtnHandler : MonoBehaviour
         switch (vb.VirtualButtonName)
         {
             case "RotateLeft":
-                player.rotation = RotationCalu(false);
+                isRotateLeft = true;
                 break;
             case "RotateRight":
-                player.rotation = RotationCalu(true);
+                isRotateRight = true;
                 break;
             case "Forward":
-                MovePlayer(DefaultSpeed);
+                isForward = true;
                 break;
             case "Backward":
-                MovePlayer(-DefaultSpeed);
+                isBackward = true;
                 break;
         }
     }
+
+    private void Update()
+    {
+        if (isForward)
+        {
+            MovePlayer(DefaultSpeed);
+        }
+
+        if (isBackward)
+        {
+            MovePlayer(-DefaultSpeed);
+        }
+
+        if (isRotateLeft)
+        {
+            player.rotation = RotationCalu(false);
+        }
+
+        if (isRotateRight)
+        {
+            player.rotation = RotationCalu(true);
+        }
+    }
+
     private void MovePlayer(float z)
     {
         var direction = new Vector3(0, 0, z);
